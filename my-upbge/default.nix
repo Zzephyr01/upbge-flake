@@ -76,6 +76,7 @@
   spaceNavSupport ? stdenv.hostPlatform.isLinux,
   sse2neon,
   stdenv,
+  clangStdenv,
   tbb,
   vulkan-headers,
   vulkan-loader,
@@ -85,9 +86,11 @@
   waylandSupport ? stdenv.hostPlatform.isLinux,
   zlib,
   zstd,
+  pipewire
 }:
 
 let
+  stdenv = clangStdenv; # lets build using clang compiler
   stdenv' = if cudaSupport then cudaPackages.backendStdenv else stdenv;
 
   embreeSupport =
@@ -117,11 +120,14 @@ stdenv'.mkDerivation (finalAttrs: {
   version = "4.3.2";
 
   srcs = [
-    (fetchzip {
-      name = "source";
-      url = "https://download.blender.org/source/blender-${finalAttrs.version}.tar.xz";
-      hash = "sha256-LCU2JpQbvQ+W/jC+H8J2suh+X5sTLOG9TcE2EeHqVh4=";
-    })
+    (fetchgit {
+            name = "source";
+            # url = "https://projects.blender.org/blender/blender.git";
+            url = "https://github.com/UPBGE/upbge.git";
+            # rev = "v${final.version}";
+            fetchLFS = true;
+            hash = "sha256-OBd2nuguLjijaKucoVw1bTPiPHyku7U3v4ZGHOyFYRs=";
+    })    
     (fetchgit {
       name = "assets";
       url = "https://projects.blender.org/blender/blender-assets.git";
@@ -134,6 +140,7 @@ stdenv'.mkDerivation (finalAttrs: {
   postUnpack = ''
     chmod -R u+w *
     rm -r assets/working
+    rm -r source/release/datafiles/assets
     mv assets --target-directory source/release/datafiles/
   '';
 
@@ -210,6 +217,8 @@ stdenv'.mkDerivation (finalAttrs: {
       "-DWITH_TBB=ON"
       "-DWITH_USD=${if openUsdSupport then "ON" else "OFF"}"
 
+      "-DWITH_PLAYER=OFF"
+      
       # Blender supplies its own FindAlembic.cmake (incompatible with the Alembic-supplied config file)
       "-DALEMBIC_INCLUDE_DIR=${lib.getDev alembic}/include"
       "-DALEMBIC_LIBRARY=${lib.getLib alembic}/lib/libAlembic${stdenv.hostPlatform.extensions.sharedLibrary}"
@@ -291,6 +300,7 @@ stdenv'.mkDerivation (finalAttrs: {
       tbb
       zlib
       zstd
+      pipewire.dev
     ]
     ++ lib.optional embreeSupport embree
     ++ lib.optional openImageDenoiseSupport (openimagedenoise.override { inherit cudaSupport; })
