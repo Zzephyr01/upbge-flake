@@ -1,9 +1,9 @@
 {
-  Cocoa,
-  CoreGraphics,
-  ForceFeedback,
-  OpenAL,
-  OpenGL,
+  # Cocoa,
+  # CoreGraphics,
+  # ForceFeedback,
+  # OpenAL,
+  # OpenGL,
   SDL,
   addDriverRunpath,
   alembic,
@@ -34,11 +34,12 @@
   lib,
   libGL,
   libGLU,
-  libX11,
-  libXext,
-  libXi,
-  libXrender,
-  libXxf86vm,
+  xorg,
+  #libX11,
+  #libXext,
+  #libXi,
+  #libXrender,
+  #libXxf86vm,
   libdecor,
   libepoxy,
   libffi,
@@ -116,7 +117,7 @@ let
 in
 
 stdenv'.mkDerivation (finalAttrs: {
-  pname = "blender";
+  pname = "upbge";
   version = "4.3.2";
 
   srcs = [
@@ -309,25 +310,26 @@ stdenv'.mkDerivation (finalAttrs: {
         [
           libGL
           libGLU
-          libX11
-          libXext
-          libXi
-          libXrender
-          libXxf86vm
+          xorg.libX11
+          xorg.libXext
+          xorg.libXi
+          xorg.libXrender
+          xorg.libXxf86vm
           openal
           openxr-loader
         ]
       else
         [
-          Cocoa
-          CoreGraphics
-          ForceFeedback
-          OpenAL
-          OpenGL
-          SDL
-          brotli
-          llvmPackages.openmp
-          sse2neon
+          # Fast fix!!!
+          # Cocoa
+          # CoreGraphics
+          # ForceFeedback
+          # OpenAL
+          # OpenGL
+          # SDL
+          # brotli
+          # llvmPackages.openmp
+          # sse2neon
         ]
     )
     ++ lib.optionals cudaSupport [ cudaPackages.cuda_cudart ]
