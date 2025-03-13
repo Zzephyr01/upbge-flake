@@ -12,13 +12,15 @@
   brotli,
   callPackage,
   cmake,
-  colladaSupport ? true,
+  # colladaSupport ? true, 
+  colladaSupport ? false, 
   config,
   cudaPackages,
   cudaSupport ? config.cudaSupport,
   dbus,
   embree,
   fetchgit,
+  fetchFromGitHub,
   fetchpatch2,
   fetchzip,
   ffmpeg,
@@ -59,13 +61,14 @@
   openal,
   opencollada,
   opencolorio,
-  openexr,
+  openexr_3,
   openimagedenoise,
   openimageio,
   openjpeg,
   openpgl,
   opensubdiv,
-  openvdb_11,
+  # openvdb_11,
+  openvdb,
   openxr-loader,
   pkg-config,
   potrace,
@@ -87,11 +90,12 @@
   waylandSupport ? stdenv.hostPlatform.isLinux,
   zlib,
   zstd,
-  pipewire
+  pipewire,
+  ...
 }:
 
 let
-  stdenv = clangStdenv; # lets build using clang compiler
+  # stdenv = clangStdenv; # lets build using clang compiler
   stdenv' = if cudaSupport then cudaPackages.backendStdenv else stdenv;
 
   embreeSupport =
@@ -109,6 +113,21 @@ let
     patches = (old.patches or [ ]) ++ [ ./libdecor.patch ];
   });
 
+  openvdb_master = openvdb.overrideAttrs
+               (old:
+                 {
+                   src = fetchFromGitHub 
+                   {
+                     owner = "AcademySoftwareFoundation";
+                     repo = "openvdb";
+                     # rev = "v${version}";
+                     rev = "5ff0edc2cc333a70923c0122d6a6deec3bc80cc4";
+                     # sha256 = "sha256-5ff0edc2cc333a70923c0122d6a6deec3bc80cc4=";
+                     sha256 = "sha256-H7N+wGzUICmX+TrKWQ2TF0hrgFHqeFdeC+22JTbM2Ik=";
+                   };
+                 }
+               );
+
   optix = fetchzip {
     # URL from https://gitlab.archlinux.org/archlinux/packaging/packages/blender/-/commit/333add667b43255dcb011215a2d2af48281e83cf#9b9baac1eb9b72790eef5540a1685306fc43fd6c_30_30
     url = "https://developer.download.nvidia.com/redist/optix/v7.3/OptiX-7.3.0-Include.zip";
@@ -117,8 +136,9 @@ let
 in
 
 stdenv'.mkDerivation (finalAttrs: {
-  pname = "upbge";
-  version = "4.3.2";
+  pname = "blender";
+  # version = "4.3.2";
+  version = "blender-v4.4-release";
 
   srcs = [
     (fetchgit {
@@ -127,14 +147,17 @@ stdenv'.mkDerivation (finalAttrs: {
             url = "https://github.com/UPBGE/upbge.git";
             # rev = "v${final.version}";
             fetchLFS = true;
-            hash = "sha256-OBd2nuguLjijaKucoVw1bTPiPHyku7U3v4ZGHOyFYRs=";
+            # hash = "sha256-J8+UlaE/d/9402jK2yIyw/40ZYcRhL64U2Gd+3vmEMY=";
+            hash = "sha256-Xrbk2i4puFYJPFzQUaGYPjhUWER9cDqJT+UYPAcSBEc=";
     })    
     (fetchgit {
       name = "assets";
       url = "https://projects.blender.org/blender/blender-assets.git";
-      rev = "v${finalAttrs.version}";
+      # rev = "v${finalAttrs.version}";
+      # ref = finalAttrs.version;
+      branchName = finalAttrs.version;
       fetchLFS = true;
-      hash = "sha256-B/UibETNBEUAO1pLCY6wR/Mmdk2o9YyNs6z6pV8dBJI=";
+      hash = "sha256-v/WeIQZMm6jdM/ROnq0kdAoA61GaZIUb0bC48Ij9IYA=";
     })
   ];
 
@@ -147,17 +170,19 @@ stdenv'.mkDerivation (finalAttrs: {
 
   sourceRoot = "source";
 
-  patches = [
-    ./draco.patch
-    (fetchpatch2 {
-      url = "https://gitlab.archlinux.org/archlinux/packaging/packages/blender/-/raw/4b6214600e11851d7793256e2f6846a594e6f223/ffmpeg-7-1.patch";
-      hash = "sha256-YXXqP/+79y3f41n3cJ3A1RBzgdoYqfKZD/REqmWYdgQ=";
-    })
-    (fetchpatch2 {
-      url = "https://gitlab.archlinux.org/archlinux/packaging/packages/blender/-/raw/4b6214600e11851d7793256e2f6846a594e6f223/ffmpeg-7-2.patch";
-      hash = "sha256-mF6IA/dbHdNEkBN5XXCRcLIZ/8kXoirNwq7RDuLRAjw=";
-    })
-  ] ++ lib.optional stdenv.hostPlatform.isDarwin ./darwin.patch;
+  patches = [];
+
+  # patches = [
+  #   ./draco.patch
+  #   (fetchpatch2 {
+  #     url = "https://gitlab.archlinux.org/archlinux/packaging/packages/blender/-/raw/4b6214600e11851d7793256e2f6846a594e6f223/ffmpeg-7-1.patch";
+  #     hash = "sha256-YXXqP/+79y3f41n3cJ3A1RBzgdoYqfKZD/REqmWYdgQ=";
+  #   })
+  #   (fetchpatch2 {
+  #     url = "https://gitlab.archlinux.org/archlinux/packaging/packages/blender/-/raw/4b6214600e11851d7793256e2f6846a594e6f223/ffmpeg-7-2.patch";
+  #     hash = "sha256-mF6IA/dbHdNEkBN5XXCRcLIZ/8kXoirNwq7RDuLRAjw=";
+  #   })
+  # ] ++ lib.optional stdenv.hostPlatform.isDarwin ./darwin.patch;
 
   postPatch =
     (lib.optionalString stdenv.hostPlatform.isDarwin ''
@@ -219,6 +244,9 @@ stdenv'.mkDerivation (finalAttrs: {
       "-DWITH_USD=${if openUsdSupport then "ON" else "OFF"}"
 
       "-DWITH_PLAYER=OFF"
+      "-DWITH_CLANG=OFF"
+      "-DWITH_OPENMP=ON"
+      
       
       # Blender supplies its own FindAlembic.cmake (incompatible with the Alembic-supplied config file)
       "-DALEMBIC_INCLUDE_DIR=${lib.getDev alembic}/include"
@@ -240,21 +268,22 @@ stdenv'.mkDerivation (finalAttrs: {
       "-DWITH_CYCLES_CUDA_BINARIES=ON"
     ];
 
-  preConfigure = ''
-    (
-      expected_python_version=$(grep -E --only-matching 'set\(_PYTHON_VERSION_SUPPORTED [0-9.]+\)' build_files/cmake/Modules/FindPythonLibsUnix.cmake | grep -E --only-matching '[0-9.]+')
-      actual_python_version=$(python -c 'import sys; print(".".join(map(str, sys.version_info[0:2])))')
-      if ! [[ "$actual_python_version" = "$expected_python_version" ]]; then
-        echo "wrong Python version, expected '$expected_python_version', got '$actual_python_version'" >&2
-        exit 1
-      fi
-    )
-  '';
+  # preConfigure = ''
+  #   (
+  #     expected_python_version=$(grep -E --only-matching 'set\(_PYTHON_VERSION_SUPPORTED [0-9.]+\)' build_files/cmake/Modules/FindPythonLibsUnix.cmake | grep -E --only-matching '[0-9.]+')
+  #     actual_python_version=$(python -c 'import sys; print(".".join(map(str, sys.version_info[0:2])))')
+  #     if ! [[ "$actual_python_version" = "$expected_python_version" ]]; then
+  #       echo "wrong Python version, expected '$expected_python_version', got '$actual_python_version'" >&2
+  #       exit 1
+  #     fi
+  #   )
+  # '';
 
   nativeBuildInputs =
     [
       cmake
       llvmPackages.llvm.dev
+      llvmPackages.openmp
       makeWrapper
       python3Packages.wrapPython
     ]
@@ -288,12 +317,13 @@ stdenv'.mkDerivation (finalAttrs: {
       libtiff
       libwebp
       opencolorio
-      openexr
+      openexr_3
       openimageio
       openjpeg
       openpgl
       (opensubdiv.override { inherit cudaSupport; })
-      openvdb_11
+      # openvdb_11
+      openvdb_master
       potrace
       pugixml
       python3
@@ -378,6 +408,7 @@ stdenv'.mkDerivation (finalAttrs: {
       mv $out/Blender.app $out/Applications
     ''
     + lib.optionalString stdenv.hostPlatform.isLinux ''
+      echo "cool" \
       mv $out/share/blender/${lib.versions.majorMinor finalAttrs.version}/python{,-ext}
     ''
     + ''
