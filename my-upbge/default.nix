@@ -157,7 +157,7 @@ stdenv'.mkDerivation (finalAttrs: {
       # ref = finalAttrs.version;
       branchName = finalAttrs.version;
       fetchLFS = true;
-      hash = "sha256-v/WeIQZMm6jdM/ROnq0kdAoA61GaZIUb0bC48Ij9IYA=";
+      hash = "sha256-DT6TgEr0NqS0svbfb3kFllwuDCEYy3JBSbjXCzVbiuo=";
     })
   ];
 
