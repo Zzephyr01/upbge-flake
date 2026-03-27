@@ -144,7 +144,7 @@ stdenv'.mkDerivation (finalAttrs: {
     (fetchgit {
             name = "source";
             # url = "https://projects.blender.org/blender/blender.git";
-            url = "https://github.com/UPBGE/upbge.git";
+            url = "https://github.com/UPBGE/upbge";
             # rev = "v${final.version}";
             fetchLFS = true;
             # hash = "sha256-J8+UlaE/d/9402jK2yIyw/40ZYcRhL64U2Gd+3vmEMY=";
