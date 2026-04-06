@@ -148,7 +148,8 @@ stdenv'.mkDerivation (finalAttrs: {
             # rev = "v${final.version}";
             fetchLFS = true;
             # hash = "sha256-J8+UlaE/d/9402jK2yIyw/40ZYcRhL64U2Gd+3vmEMY=";
-            hash = "sha256-Xrbk2i4puFYJPFzQUaGYPjhUWER9cDqJT+UYPAcSBEc=";
+            # hash = "sha256-Xrbk2i4puFYJPFzQUaGYPjhUWER9cDqJT+UYPAcSBEc=";
+            hash = "sha256-GLJyMe+/m8We5mN8hK05JX6yjz+DTh/ngeYQQEeLn+o=";
     })    
     (fetchgit {
       name = "assets";
