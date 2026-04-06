@@ -12,8 +12,6 @@
         # xorg = my-pkgs.xorg;
         
     in{ 
-      foo = "bar";
-      cool = 23;
       # packages.x86_64-linux.todel = import ./todel  {a = 23; inherit (my-pkgs) bash coreutils;}  ;#{inherit (my-pkgs) stdenv;};
 
       # overlays = [
