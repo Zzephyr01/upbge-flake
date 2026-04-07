@@ -167,7 +167,7 @@ stdenv'.mkDerivation (finalAttrs: {
     chmod -R u+w *
     # rm -r assets/working
     # rm -r source/release/datafiles/assets
-    mv assets --target-directory source/release/datafiles/
+    # mv assets --target-directory source/release/datafiles/
   '';
 
   sourceRoot = "source";
