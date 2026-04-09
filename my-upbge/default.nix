@@ -436,13 +436,13 @@ stdenv'.mkDerivation (finalAttrs: {
 
   passthru = {
     python = python3;
-    pythonPackages = python3Packages;
+    pythonPackages = python314Packages;
 
     withPackages =
       f:
       (callPackage ./wrapper.nix { }).override {
         blender = finalAttrs.finalPackage;
-        extraModules = (f python3Packages);
+        extraModules = (f python314Packages);
       };
 
     tests = {
