@@ -73,7 +73,7 @@
   pkg-config,
   potrace,
   pugixml,
-  python3Packages, # must use instead of python3.pkgs, see https://github.com/NixOS/nixpkgs/issues/211340
+  python314Packages, # must use instead of python3.pkgs, see https://github.com/NixOS/nixpkgs/issues/211340
   rocmPackages, # comes with a significantly larger closure size
   runCommand,
   shaderc,
@@ -105,8 +105,8 @@ let
   openUsdSupport = !stdenv.hostPlatform.isDarwin;
   vulkanSupport = !stdenv.hostPlatform.isDarwin;
 
-  python3 = python3Packages.python;
-  pyPkgsOpenusd = python3Packages.openusd.override { withOsl = false; };
+  python3 = python314Packages.python;
+  pyPkgsOpenusd = python314Packages.openusd.override { withOsl = false; };
 
   libdecor' = libdecor.overrideAttrs (old: {
     # Blender uses private APIs, need to patch to expose them
