@@ -192,7 +192,7 @@ stdenv'.mkDerivation (finalAttrs: {
       substituteInPlace source/creator/CMakeLists.txt \
         --replace-fail '${"$"}{LIBDIR}/python' \
                   '${python3}' \
-        --replace-fail '${"$"}{LIBDIR}/materialx/' '${python3Packages.materialx}/'
+        --replace-fail '${"$"}{LIBDIR}/materialx/' '${python314Packages.materialx}/'
       substituteInPlace build_files/cmake/platform/platform_apple.cmake \
         --replace-fail '${"$"}{LIBDIR}/brotli/lib/libbrotlicommon-static.a' \
                   '${lib.getLib brotli}/lib/libbrotlicommon.dylib' \
@@ -208,12 +208,12 @@ stdenv'.mkDerivation (finalAttrs: {
 
   cmakeFlags =
     [
-      "-DMaterialX_DIR=${python3Packages.materialx}/lib/cmake/MaterialX"
+      "-DMaterialX_DIR=${python314Packages.materialx}/lib/cmake/MaterialX"
       "-DPYTHON_INCLUDE_DIR=${python3}/include/${python3.libPrefix}"
       "-DPYTHON_LIBPATH=${python3}/lib"
       "-DPYTHON_LIBRARY=${python3.libPrefix}"
-      "-DPYTHON_NUMPY_INCLUDE_DIRS=${python3Packages.numpy_1}/${python3.sitePackages}/numpy/core/include"
-      "-DPYTHON_NUMPY_PATH=${python3Packages.numpy_1}/${python3.sitePackages}"
+      "-DPYTHON_NUMPY_INCLUDE_DIRS=${python314Packages.numpy_1}/${python3.sitePackages}/numpy/core/include"
+      "-DPYTHON_NUMPY_PATH=${python314Packages.numpy_1}/${python3.sitePackages}"
       "-DPYTHON_VERSION=${python3.pythonVersion}"
       "-DWITH_ALEMBIC=ON"
       "-DWITH_ASSERT_ABORT=OFF"
