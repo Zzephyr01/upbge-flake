@@ -287,7 +287,7 @@ stdenv'.mkDerivation (finalAttrs: {
       llvmPackages.llvm.dev
       llvmPackages.openmp
       makeWrapper
-      python3Packages.wrapPython
+      python314Packages.wrapPython
     ]
     ++ lib.optionals cudaSupport [
       addDriverRunpath
