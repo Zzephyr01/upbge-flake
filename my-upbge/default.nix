@@ -385,7 +385,7 @@ stdenv'.mkDerivation (finalAttrs: {
 
   pythonPath =
     let
-      ps = python3Packages;
+      ps = python314Packages;
     in
     [
       ps.materialx
