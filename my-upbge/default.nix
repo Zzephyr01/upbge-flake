@@ -329,7 +329,7 @@ stdenv'.mkDerivation (finalAttrs: {
       potrace
       pugixml
       python3
-      python3Packages.materialx
+      python314Packages.materialx
       tbb
       zlib
       zstd
